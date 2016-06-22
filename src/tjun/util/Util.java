@@ -46,8 +46,13 @@ public class Util {
             System.out.println(gift);
         }
         
+        System.out.println("======================================");
+        
+        for(int i=0;i<20;i++){
+        	Gift gift=Util.lotteryGift(gifts);
+        	 System.out.println(gift);
+        }
 	}
-	
 	
 	
 	/**
@@ -99,6 +104,45 @@ public class Util {
 		return rnum;
 	}
 	
+	
+	/**直接返回被抽中的奖品**/
+	private static Gift lotteryGift(List<Gift> ratesList){
+		Gift gift=null;
+		if (ratesList == null || ratesList.isEmpty()) {
+            return gift;
+        }
+		
+		 // 计算总概率，这样可以保证不一定总概率是1
+        double sumRate = 0d;
+        for (Gift listGist : ratesList) {
+        	if(listGist.getProbability()>0){
+        		sumRate += listGist.getProbability();
+        	}
+        }
+		
+	    // 计算每个物品在总概率的基础下的概率情况
+	    List<Double> sortOrignalRates = new ArrayList<Double>(ratesList.size());
+	    Double tempSumRate = 0d;
+	    for (Gift listGist : ratesList) {
+	    	if(listGist.getProbability()>0){
+	    		tempSumRate += listGist.getProbability();
+	    		sortOrignalRates.add(tempSumRate / sumRate);
+	    	}
+	    }
+	    
+	    // 根据区块值来获取抽取到的物品索引
+        double nextDouble = Math.random();
+        //System.out.println("nextDouble.  随机数........."+nextDouble);
+        sortOrignalRates.add(nextDouble);
+        Collections.sort(sortOrignalRates);
+        //System.out.println(">>>>>>>>sortOrignalRates   利率比   反转#####>>>>>>"+sortOrignalRates);
+        int numA=sortOrignalRates.indexOf(nextDouble);
+        gift=ratesList.get(numA);
+        
+		return gift;
+	}
+		
+		
 	
 }
 
